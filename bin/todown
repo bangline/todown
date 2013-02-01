@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+require 'todown'
+require 'thor'
+require 'colorize'
+
+class TodownCli < Thor
+
+  desc 'init FILE', 'initialize a todo list for the app'
+  method_option :file, aliases: '-f', default: 'todo.md', desc: 'Specify the todo file'
+  def init
+    Todown::Config.generate
+    Todown::Config.add(:file, options.file)
+    Todown::File.create(options.file)
+  end
+
+  desc 'add  [todo item text] -p [priority] -c [context]', 'add a todo item'
+  method_option :priority, aliases: '-p', default: '2', desc: 'Set the priority of the item'
+  method_option :context, aliases: '-c', default: '', desc: 'Set the context of the item'
+  def add(item)
+    Todown::List.add(item, options.priority, options.context)
+  end
+
+  desc 'list', 'show the current todo items'
+  def list
+    Todown::List.show
+  end
+
+end
+
+TodownCli.start
